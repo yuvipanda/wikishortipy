@@ -3,8 +3,6 @@ import json
 from flask import Flask, redirect
 import requests
 
-import base36
-
 app = Flask(__name__)
 app.debug = True
 
@@ -18,7 +16,7 @@ def url_for_page(lang, id):
     data = json.loads(res.content)
     page = data['query']['pages'][str(id)]
     if 'missing' in page:
-        return 'google.com'
+        return 'google.com' # Actually show up 404 page
     else:
         print page
         print repr(page['fullurl'])
