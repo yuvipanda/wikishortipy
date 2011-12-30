@@ -28,7 +28,7 @@ def url_for_page(lang, id):
         else:
             title = page['title']
             cache.set(url, title)
-    return '%s/wiki/%s' % (host, page['title'])
+    return '%s/wiki/%s' % (host, title)
 
 @app.route('/s/<lang>/<shortkey>/')
 def do_redirect(lang, shortkey):
