@@ -30,7 +30,7 @@ def url_for_page(lang, id):
             cache.set(url, title)
     return '%s/wiki/%s' % (host, title)
 
-@app.route('/r/<lang>/<shortkey>/')
+@app.route('/s/<lang>/<shortkey>/')
 def do_redirect(lang, shortkey):
     page_id = int(shortkey, 36)
     return redirect(url_for_page(lang, page_id))
