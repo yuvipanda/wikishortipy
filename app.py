@@ -3,8 +3,14 @@ import json
 from flask import Flask, redirect
 import requests
 
+import settings
+
 app = Flask(__name__)
 app.debug = True
+
+app.config.from_envvar('WIKISHORTIPY_SETTINGS')
+
+cache = app.config['CACHE']
 
 def host_for_lang(lang):
     return 'http://%s.wikipedia.org' % lang
@@ -12,15 +18,17 @@ def host_for_lang(lang):
 def url_for_page(lang, id):
     host = host_for_lang(lang)
     url = '%s/w/api.php?action=query&prop=info&inprop=url&format=json&pageids=%s' % (host, id)
-    res = requests.get(url)
-    data = json.loads(res.content)
-    page = data['query']['pages'][str(id)]
-    if 'missing' in page:
-        return 'google.com' # Actually show up 404 page
-    else:
-        print page
-        print repr(page['fullurl'])
-        return '%s/wiki/%s' % (host, page['title'])
+    title = cache.get(url) 
+    if title == None:
+        res = requests.get(url)
+        data = json.loads(res.content)
+        page = data['query']['pages'][str(id)]
+        if 'missing' in page:
+            title = ''
+        else:
+            title = page['title']
+            cache.set(url, title)
+    return '%s/wiki/%s' % (host, page['title'])
 
 @app.route('/<lang>/<shortkey>')
 def do_redirect(lang, shortkey):
