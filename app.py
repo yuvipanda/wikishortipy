@@ -32,11 +32,12 @@ def url_for_page(lang, id):
 
 def interwiki_for_page(lang, entitle):
     host = host_for_lang(lang)
-    url = 'http://en.wikipedia.org/w/api.php?action=query&prop=langlinks&lllimit=500&format=json&titles=%s' % (entitle, )
+    url = 'http://en.wikipedia.org/w/api.php?action=query&prop=langlinks&lllimit=500&format=json&redirects=true&titles=%s' % (entitle, )
     data = cache.get(url)
     if data == None:
         res = requests.get(url)
         data = json.loads(res.content)
+        cache.set(url, data)
     title = '' 
     if '-1' not in data['query']['pages']:
         langlinks = data['query']['pages'].values()[0]['langlinks']
